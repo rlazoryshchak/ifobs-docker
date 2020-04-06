@@ -2,8 +2,8 @@ FROM ubuntu:16.04
 
 
 ENV TERM=xterm \
-    JAVA_HOME=/otp/jre1.8.0_191 \
-    PATH=$PATH:/otp/jre1.8.0_191/bin
+    JAVA_HOME=/ifobs/jre1.8.0_191 \
+    PATH=$PATH:/ifobs/jre1.8.0_191/bin
 
 # Устанавливаем зависимости, необходимые для запуска firefox
 RUN DEBIAN_FRONTEND=noninteractive apt-get update \
@@ -22,24 +22,23 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
 
 
 # Копируем архивы с java и firefox esr внутрь контейнера
-COPY src/* /otp/
+COPY src/* /ifobs/
 
 
 # Создаем отдельного пользователя firefox, от которого будет запускаться наш веб проводник,
 # так как от root он работать не будет. А так же подключаем и настраиваем java plugin
-RUN useradd firefox -s /bin/bash -m -d /otp/firefox/ \
-    && cd /otp/ && tar jxf firefox-52.9.0esr.tar.bz2 \
+RUN useradd firefox -s /bin/bash -m -d /ifobs/firefox/ \
+    && cd /ifobs/ && tar jxf firefox-52.9.0esr.tar.bz2 \
     && tar zxf jre-8u191-linux-x64.tar.gz \
-    && mkdir -p /otp/firefox/.mozilla/plugins \
-    && cd /otp/firefox/.mozilla/plugins \
-    && ln -s /otp/jre1.8.0_191/lib/amd64/libnpjp2.so . \
-    && chown -R firefox:firefox /otp/firefox/ \
+    && mkdir -p /ifobs/firefox/.mozilla/plugins \
+    && cd /ifobs/firefox/.mozilla/plugins \
+    && ln -s /ifobs/jre1.8.0_191/lib/amd64/libnpjp2.so . \
+    && chown -R firefox:firefox /ifobs/firefox/ \
     && echo '577fed1c21a64f2cb186c800ae467e9d' > /etc/machine-id
 
 
-WORKDIR /otp/firefox/
+WORKDIR /ifobs/firefox/
 USER firefox
 
 #CMD ["tree"]
-ENTRYPOINT ["/otp/firefox/firefox"]
-
+ENTRYPOINT ["/ifobs/firefox/firefox", "https://ifobs.kredobank.com.ua/"]
